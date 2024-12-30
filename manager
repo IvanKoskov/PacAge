@@ -1,0 +1,15 @@
+This is the template for making a manager aka control file for project info and etc.
+
+
+Package: com.example.app
+Version: 1.0.0
+Architecture: 
+Maintainer: the info of a maintainer. Ex your email
+Depends: mobilesubstrate
+Filename: ./debs/audioenglish_1.0.deb
+Size: 400 (meserment) or just leave "blank"
+Section: app, utility
+Description: cool app to use huh)
+Author: example.user@gmail.com
+Name: youtube
+

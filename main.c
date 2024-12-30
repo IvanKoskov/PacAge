@@ -5,6 +5,10 @@
  #include "config.h"
  #include <string.h>
  #include "clone.h"
+#include "modify.h"
+#include "newrepo.h"
+#include "showrepos.h"
+#include "deleterepo.h"
 
  #define RESET   "\x1b[0m"
 #define RED     "\x1b[31m"
@@ -28,15 +32,23 @@ int main(int argc, char *argv[]) {
     if (argc > 1 && strcmp(argv[1], "wha") == 0) {
         whaCommand();
     } else if (argc > 1 && strcmp(argv[1], "modify") == 0) {
-        //modifyCommand();
-        printf("hi");
+       // modifyCommand(argc, argv);
+        createCoreSourcesFolder();
     } else if (argc > 1 && strcmp(argv[1], "control") == 0) {
       displayConfig();
 
     } else if (argc > 1 && strcmp(argv[1], "clone") == 0) {
       cloneCommand(argc, argv);
 
-    } 
+    } else if (argc > 1 && strcmp(argv[1], "cr") == 0) { //add repo 
+      crCommand(argc, argv);
+
+    } else if (argc > 1 && strcmp(argv[1], "rm") == 0) { //remove repo
+      rmCommand(argc, argv);
+
+    } else if (argc > 1 && strcmp(argv[1], "listr") == 0) {
+      showreposCommand();
+    }
 
 
 

@@ -1,7 +1,7 @@
 #ifndef MODIFY_H
 #define MODIFY_H
 
-void modifyCommand(void);
-
+void modifyCommand(int argc, char *argv[]);
+void createCoreSourcesFolder(void);
 
 #endif
