@@ -32,7 +32,10 @@ int main(int argc, char *argv[]) {
     } else if (argc > 1 && strcmp(argv[1], "control") == 0) {
       displayConfig();
 
-    }
+    } else if (argc > 1 && strcmp(argv[1], "clone") == 0) {
+      
+
+    } 
 
 
 
