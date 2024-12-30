@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+
+int directoryExists(const char *path) {
+    struct stat info;
+    return (stat(path, &info) == 0 && (info.st_mode & S_IFDIR));
+}
 
 void cloneCommand(int argc, char *argv[]) {
     if (argc < 3) {
@@ -17,6 +23,12 @@ void cloneCommand(int argc, char *argv[]) {
     char destinationPath[1024];
     scanf("%s", destinationPath);
 
+    // Check if the destination directory exists
+    if (directoryExists(destinationPath)) {
+        printf("Error: The destination path '%s' already exists and is not empty.\n", destinationPath);
+        return;
+    }
+
     // Form the git clone command
     char command[1024];
     snprintf(command, sizeof(command), "git clone %s %s", repoUrl, destinationPath);
@@ -30,6 +42,3 @@ void cloneCommand(int argc, char *argv[]) {
         fprintf(stderr, "Failed to clone repository.\n");
     }
 }
-
-
-

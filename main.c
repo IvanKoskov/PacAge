@@ -4,6 +4,7 @@
  #include "alert.h"
  #include "config.h"
  #include <string.h>
+ #include "clone.h"
 
  #define RESET   "\x1b[0m"
 #define RED     "\x1b[31m"
@@ -33,7 +34,7 @@ int main(int argc, char *argv[]) {
       displayConfig();
 
     } else if (argc > 1 && strcmp(argv[1], "clone") == 0) {
-      
+      cloneCommand(argc, argv);
 
     } 
 
