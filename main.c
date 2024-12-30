@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     if (argc > 1 && strcmp(argv[1], "wha") == 0) {
         whaCommand();
     } else if (argc > 1 && strcmp(argv[1], "modify") == 0) {
-       // modifyCommand(argc, argv);
+        modifyCommand(argc, argv);
         createCoreSourcesFolder();
     } else if (argc > 1 && strcmp(argv[1], "control") == 0) {
       displayConfig();
@@ -48,6 +48,9 @@ int main(int argc, char *argv[]) {
 
     } else if (argc > 1 && strcmp(argv[1], "listr") == 0) {
       showreposCommand();
+    } else if (argc > 1 && strcmp(argv[1], "CORE_CREATE_FILES") == 0) {
+
+     createCoreSourcesFolder();
     }
 
 
