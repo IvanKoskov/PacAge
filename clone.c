@@ -20,18 +20,28 @@ void cloneCommand(int argc, char *argv[]) {
 
     // Ask for the destination path
     printf("Provide destination path for the project: \n");
-    char destinationPath[1024];
-    scanf("%s", destinationPath);
+    size_t destPathLen=0;
+    char * destinationPath = NULL;
+    ssize_t read = getline(&destinationPath, &destPathLen, stdin);
+    if (read==-1)
+    {
+        printf("Error: Can't get input.\n");
+        exit(1);
+    }
 
     // Check if the destination directory exists
     if (directoryExists(destinationPath)) {
         printf("Error: The destination path '%s' already exists and is not empty.\n", destinationPath);
-        return;
+        exit(1);
     }
 
     // Form the git clone command
-    char command[1024];
-    snprintf(command, sizeof(command), "git clone %s %s", repoUrl, destinationPath);
+    size_t command_len = 12
+        +strlen(repoUrl)
+        +destPathLen;
+
+    char * command = malloc(command_len);
+    snprintf(command, command_len, "git clone %s %s", repoUrl, destinationPath);
 
     // Execute the command
     int result = system(command);
