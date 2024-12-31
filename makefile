@@ -12,7 +12,7 @@ $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
 install: $(TARGET)
-	mv pacage /usr/local/bin
+	mv bin/pacage /usr/local/bin
 
 # Clean up build artifacts
 clean:
