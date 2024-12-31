@@ -3,15 +3,13 @@
  #include <stdlib.h>
  #include "alert.h"
 
- void confCommand() {
- 
- FILE *file_check = fopen("settingpc", "r");
+void confCommand() {
+    FILE *file_check = fopen("settingpc", "r");
 
-    if (file_check != NULL) {
-        // File exists
-        
+    if (file_check != NULL)
         fclose(file_check);  // Close the file pointer
-    } else {
+
+    else {
         // File doesn't exist, create and write to it
         whaCommand();
         FILE *file = fopen("settingpc", "w");
@@ -27,8 +25,5 @@
 
         // Close the file
         fclose(file);
-
-        
     }
-
- }
+}

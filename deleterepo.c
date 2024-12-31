@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void rmCommand(int argc, char *argv[]) {
+void rmCommand(int argc, char ** argv) {
     if (argc < 3) {
         fprintf(stderr, "Error: Missing repository URL. Usage: rmCommand <repo_url>\n");
         return;
