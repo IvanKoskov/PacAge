@@ -15,48 +15,67 @@ int is_executable(const char *path) {
     return 0;
 }
 
-// Function to search for executable files in the repository directory
 const char *find_executable(const char *repoDir) {
-    DIR *dir = opendir(repoDir);
-    if (dir == NULL) {
-        perror("Error opening directory");
-        return NULL;
-    }
+    const char *locations[] = {
+        "bin/",             // bin/<executable_name>
+        "usr/bin/",         // usr/bin/<executable_name>
+        "usr/local/bin/",   // usr/local/bin/<executable_name>
+        "sbin/",            // sbin/<executable_name>
+        "usr/sbin/",        // usr/sbin/<executable_name>
+        "libexec/",         // libexec/<executable_name>
+        ""                  // root-level <executable_name>
+    };
 
-    struct dirent *entry;
-    while ((entry = readdir(dir)) != NULL) {
-        // Skip '.' and '..'
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
+    static char fullPath[512];
+    char destPath[512];
+
+    for (size_t i = 0; i < sizeof(locations) / sizeof(locations[0]); ++i) {
+        snprintf(fullPath, sizeof(fullPath), "%s/%s", repoDir, locations[i]);
+
+        struct stat sb;
+        if (stat(fullPath, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+            // Directory found, iterate through its files
+            DIR *dir = opendir(fullPath);
+            if (dir) {
+                struct dirent *entry;
+                while ((entry = readdir(dir)) != NULL) {
+                    if (entry->d_name[0] == '.') {
+                        continue; // Skip hidden files and "." or ".."
+                    }
+
+                    snprintf(destPath, sizeof(destPath), "%s/%s", fullPath, entry->d_name);
+
+                    // Check if the file is executable
+                    if (stat(destPath, &sb) == 0 && (sb.st_mode & S_IXUSR)) {
+                        // Move executable to /usr/local/bin
+                        snprintf(fullPath, sizeof(fullPath), "/usr/local/bin/%s", entry->d_name);
+
+                        if (rename(destPath, fullPath) == 0) {
+                            printf("Moved executable to: %s\n", fullPath);
+                            closedir(dir);
+                            return fullPath;
+                        } else {
+                            perror("Failed to move executable");
+                            closedir(dir);
+                            return NULL;
+                        }
+                    }
+                }
+                closedir(dir);
+            }
+        } else if (stat(fullPath, &sb) == 0 && (sb.st_mode & S_IXUSR)) {
+            // Single executable file at this location
+            snprintf(destPath, sizeof(destPath), "/usr/local/bin/%s", strrchr(fullPath, '/') + 1);
+
+            if (rename(fullPath, destPath) == 0) {
+                printf("Moved executable to: %s\n", destPath);
+                return destPath;
+            } else {
+                perror("Failed to move executable");
+                return NULL;
+            }
         }
-
-        char path[1024];
-        snprintf(path, sizeof(path), "%s/%s", repoDir, entry->d_name);
-
-        if (is_executable(path)) {
-            closedir(dir);
-            return entry->d_name;  // Return only the executable name
-        }
     }
 
-    closedir(dir);
-    return NULL;  // No executable found
-}
-
-
-// Function to copy the executable to /usr/local/bin
-
-void move_executable_to_bin(const char *exePath) {
-    // Prepare the shell command to call the move script
-    char command[1024];
-    snprintf(command, sizeof(command), "./move_executable.sh \"%s\"", exePath);
-
-    // Execute the shell script
-    int result = system(command);
-
-    if (result == 0) {
-        printf("Executable moved successfully.\n");
-    } else {
-        printf("Error moving executable.\n");
-    }
+    return NULL; // No executable found
 }

@@ -158,22 +158,18 @@ void modifyCommand(int argc, char *argv[]){
 
     printf("Locating the executables.....\n");
 
-    const char *exePath = find_executable(destinationPath);
-
-    if (exePath == NULL) {
-        printf("Executable not found. Attempting to build the project...\n");
-        
-        return;
-    } else {
-        printf("Found executable at: %s\n", exePath);
-    }
-
-   move_executable_to_bin(exePath);
+   
 
 
     // installation process (e.g., clone the repository, extract files, etc.)
     // In reality, you'd probably clone the repo or download necessary files here
 
-    
+     const char *executable = find_executable(destinationPath);;
+
+    if (executable) {
+        printf("Executable found at: %s\n", executable);
+    } else {
+        printf("No executable found in the package.\n");
+    }
 
 }

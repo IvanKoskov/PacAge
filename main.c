@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
         whaCommand();
     } else if (argc > 1 && strcmp(argv[1], "modify") == 0) {
         modifyCommand(argc, argv);
-        createCoreSourcesFolder();
+       // createCoreSourcesFolder();
     } else if (argc > 1 && strcmp(argv[1], "control") == 0) {
       displayConfig();
 
