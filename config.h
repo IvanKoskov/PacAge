@@ -4,8 +4,8 @@
 // Project metadata
 #define PROJECT_NAME "Pacage"
 #define VERSION "1.0.1" //beta
-#define AUTHOR "Ivan Koskov"
-#define MAINTAINER "Ivan Koskov"
+#define AUTHOR "Adisteyf, Ivan Koskov"
+#define MAINTAINER "In development..."
 #define LICENSE "MIT License"
 #define PLATFORM "Unix based"
 

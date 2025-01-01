@@ -15,6 +15,9 @@ int is_executable(const char *path) {
     return 0;
 }
 
+
+
+
 const char *find_executable(const char *repoDir) {
     const char *locations[] = {
         "bin/",             // bin/<executable_name>
@@ -26,16 +29,28 @@ const char *find_executable(const char *repoDir) {
         ""                  // root-level <executable_name>
     };
 
-    static char fullPath[512];
-    char destPath[512];
+    static char sourcePath[512];  // For source path
+    char destPath[512];           // For destination path
+    char fullDestPath[512];       // For full destination path
+    char repoName[256];           // To hold the repo name
 
+    // Extract repository name (assumes repoDir is a full path)
+    const char *repoBase = strrchr(repoDir, '/');
+    if (repoBase != NULL) {
+        strncpy(repoName, repoBase + 1, sizeof(repoName) - 1);  // Extracts the last part of the repoDir path
+        repoName[sizeof(repoName) - 1] = '\0';  // Ensure null termination
+    } else {
+        repoName[0] = '\0';  // If there's no '/' in the path, leave repoName empty
+    }
+
+    // Iterate over all locations
     for (size_t i = 0; i < sizeof(locations) / sizeof(locations[0]); ++i) {
-        snprintf(fullPath, sizeof(fullPath), "%s/%s", repoDir, locations[i]);
+        snprintf(sourcePath, sizeof(sourcePath), "%s/%s", repoDir, locations[i]);
 
         struct stat sb;
-        if (stat(fullPath, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+        if (stat(sourcePath, &sb) == 0 && S_ISDIR(sb.st_mode)) {
             // Directory found, iterate through its files
-            DIR *dir = opendir(fullPath);
+            DIR *dir = opendir(sourcePath);
             if (dir) {
                 struct dirent *entry;
                 while ((entry = readdir(dir)) != NULL) {
@@ -43,36 +58,54 @@ const char *find_executable(const char *repoDir) {
                         continue; // Skip hidden files and "." or ".."
                     }
 
-                    snprintf(destPath, sizeof(destPath), "%s/%s", fullPath, entry->d_name);
+                    snprintf(destPath, sizeof(destPath), "%s/%s", sourcePath, entry->d_name);
 
-                    // Check if the file is executable
-                    if (stat(destPath, &sb) == 0 && (sb.st_mode & S_IXUSR)) {
-                        // Move executable to /usr/local/bin
-                        snprintf(fullPath, sizeof(fullPath), "/usr/local/bin/%s", entry->d_name);
+                    // Check if the file is executable (and not a directory)
+                    if (stat(destPath, &sb) == 0 && (sb.st_mode & S_IXUSR) && !S_ISDIR(sb.st_mode)) {
+                        // Construct the full destination path for /usr/local/bin/
+                        snprintf(fullDestPath, sizeof(fullDestPath), "/usr/local/bin/%s", entry->d_name);
 
-                        if (rename(destPath, fullPath) == 0) {
-                            printf("Moved executable to: %s\n", fullPath);
-                            closedir(dir);
-                            return fullPath;
+                        if (rename(destPath, fullDestPath) == 0) {
+                            printf("Moved executable to: %s\n", fullDestPath);
+
+                            // Log the full path to the installed file inside Sources_CORE
+                            char logFilePath[512];
+                            snprintf(logFilePath, sizeof(logFilePath), "%s/Documents/Sources_CORE/installed", getenv("HOME"));
+
+                            FILE *logFile = fopen(logFilePath, "a");
+                            if (logFile) {
+                                fprintf(logFile, "%s/%s\n", repoDir, entry->d_name);  // Log full path of executable
+                                fclose(logFile);
+                            } else {
+                                perror("Failed to open installed file");
+                            }
                         } else {
                             perror("Failed to move executable");
-                            closedir(dir);
-                            return NULL;
                         }
                     }
                 }
                 closedir(dir);
             }
-        } else if (stat(fullPath, &sb) == 0 && (sb.st_mode & S_IXUSR)) {
-            // Single executable file at this location
-            snprintf(destPath, sizeof(destPath), "/usr/local/bin/%s", strrchr(fullPath, '/') + 1);
+        } else if (stat(sourcePath, &sb) == 0 && (sb.st_mode & S_IXUSR) && !S_ISDIR(sb.st_mode)) {
+            // If it's a file and executable (non-directory case)
+            snprintf(fullDestPath, sizeof(fullDestPath), "/usr/local/bin/%s", strrchr(sourcePath, '/') + 1);
 
-            if (rename(fullPath, destPath) == 0) {
-                printf("Moved executable to: %s\n", destPath);
-                return destPath;
+            if (rename(sourcePath, fullDestPath) == 0) {
+                printf("Moved executable to: %s\n", fullDestPath);
+
+                // Log the full path to the installed file inside Sources_CORE
+                char logFilePath[512];
+                snprintf(logFilePath, sizeof(logFilePath), "%s/Documents/Sources_CORE/installed", getenv("HOME"));
+
+                FILE *logFile = fopen(logFilePath, "a");
+                if (logFile) {
+                    fprintf(logFile, "%s/%s\n", repoDir, strrchr(sourcePath, '/') + 1);  // Log full path of executable
+                    fclose(logFile);
+                } else {
+                    perror("Failed to open installed file");
+                }
             } else {
                 perror("Failed to move executable");
-                return NULL;
             }
         }
     }

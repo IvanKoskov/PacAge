@@ -9,6 +9,7 @@
 #include "newrepo.h"
 #include "showrepos.h"
 #include "deleterepo.h"
+#include "listInstalled.h"
 
 #define RESET   "\x1b[0m"
 #define RED     "\x1b[31m"
@@ -51,7 +52,10 @@ int main(int argc, char *argv[]) {
     } else if (argc > 1 && strcmp(argv[1], "CORE_CREATE_FILES") == 0) {
 
      createCoreSourcesFolder();
-    }
+    } else if (argc > 1 && strcmp(argv[1], "ls-installd") == 0) {
+     listInstalledCommand();
+     
+    } 
 
     return 0;
 }
