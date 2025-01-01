@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     } else if (argc > 1 && strcmp(argv[1], "clone") == 0) {
       cloneCommand(argc, argv);
 
-    } else if (argc > 1 && strcmp(argv[1], "cr") == 0) { //add repo  
+    } else if (argc > 1 && strcmp(argv[1], "cr") == 0) { //add repo   
       crCommand(argc, argv);
 
     } else if (argc > 1 && strcmp(argv[1], "rm") == 0) { //remove repo
