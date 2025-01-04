@@ -18,7 +18,7 @@ int is_executable(const char *path) {
 
 
 
-const char *find_executable(const char *repoDir) {
+const char *find_executable(const char *repoDir, const char *repoUrl) {
     const char *locations[] = {
         "bin/",             // bin/<executable_name>
         "usr/bin/",         // usr/bin/<executable_name>
@@ -74,7 +74,7 @@ const char *find_executable(const char *repoDir) {
 
                             FILE *logFile = fopen(logFilePath, "a");
                             if (logFile) {
-                                fprintf(logFile, "%s/%s\n", repoDir, entry->d_name);  // Log full path of executable
+                                fprintf(logFile, "%s/%s %s\n", repoDir, entry->d_name, repoUrl);  // Log full path and repo URL
                                 fclose(logFile);
                             } else {
                                 perror("Failed to open installed file");
@@ -99,7 +99,7 @@ const char *find_executable(const char *repoDir) {
 
                 FILE *logFile = fopen(logFilePath, "a");
                 if (logFile) {
-                    fprintf(logFile, "%s/%s\n", repoDir, strrchr(sourcePath, '/') + 1);  // Log full path of executable
+                    fprintf(logFile, "%s/%s %s\n", repoDir, strrchr(sourcePath, '/') + 1, repoUrl);  // Log full path and repo URL
                     fclose(logFile);
                 } else {
                     perror("Failed to open installed file");
@@ -112,3 +112,4 @@ const char *find_executable(const char *repoDir) {
 
     return NULL; // No executable found
 }
+

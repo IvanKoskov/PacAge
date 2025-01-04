@@ -3,6 +3,6 @@
 #define UPDATECOMMAND_H
 
 
-void updtCommand(void);
+void updtCommand(int argc, char *argv[]);
 
 #endif

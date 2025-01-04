@@ -2,6 +2,6 @@
 #define SEARCHEXEC_H
 
 int is_executable(const char *path);
-const char *find_executable(const char *repoDir);
+const char *find_executable(const char *repoDir, const char *repoUrl);
 
 #endif 

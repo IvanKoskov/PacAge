@@ -10,6 +10,7 @@
 #include "showrepos.h"
 #include "deleterepo.h"
 #include "listInstalled.h"
+#include "updateCommand.h"
 
 #define RESET   "\x1b[0m"
 #define RED     "\x1b[31m"
@@ -55,6 +56,8 @@ int main(int argc, char *argv[]) {
     } else if (argc > 1 && strcmp(argv[1], "ls-installd") == 0) {
      listInstalledCommand();
      
+    } else if (argc > 1 && strcmp(argv[1], "updt") == 0) {
+     updtCommand(argc, argv);
     } 
 
     return 0;

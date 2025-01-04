@@ -164,7 +164,7 @@ void modifyCommand(int argc, char *argv[]){
     // installation process (e.g., clone the repository, extract files, etc.)
     // In reality, you'd probably clone the repo or download necessary files here
 
-     const char *executable = find_executable(destinationPath);;
+     const char *executable = find_executable(destinationPath, repoUrl);
 
     if (executable) {
         printf("Executable found at: %s\n", executable);
